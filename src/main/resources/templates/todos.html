@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>My To-Do List</title>
+    <!-- do not do it like this in production please! -->
+    <script src="https://unpkg.com/htmx.org@1.9.3"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 p-4">
+
+<div class="container mx-auto text-center mb-8">
+    <h1 class="text-4xl font-bold">ToDo App</h1>
+</div>
+
+<div class="container mx-auto">
+    <div class="todos-list">
+        <div th:each="todo: ${todos}" th:fragment="todos" class="todo grid grid-cols-1 md:grid-cols-3 items-center border-t border-gray-300 py-2">
+            <div class="text-right text-gray-600 mb-2 md:mb-0 md:mr-4" th:text="${todo.id}">243</div>
+            <div class="text-gray-800 font-medium mb-2 md:mb-0" th:text="${todo.content}">title</div>
+            <div class="text-right md:text-left">
+                <button hx-confirm="Are you sure?"
+                        hx-target="closest .todo"
+                        hx-swap="outerHTML"
+                        class="bg-red-500 text-white py-1 px-2 rounded-full hover:bg-red-600"
+                        hx-trigger="click"
+                        th:attr="hx-delete=@{/todos/{id}(id=${todo.id})}">
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="todos-form" th:fragment="todos-form" hx-swap-oob="true" class="todos-form mt-4">
+        <div class="todo line grid grid-cols-1 md:grid-cols-3 items-center border-t border-gray-300 py-2">
+            <div></div>
+            <div class="mb-2 mr-2 md:mb-0">
+                <input type="text" name="new-todo" id="new-todo" class="border p-2 w-full mx-auto focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200"/>
+            </div>
+            <div class="mt-2 md:mt-0 text-right md:text-left">
+                <button hx-include="#new-todo"
+                        hx-post="/todos"
+                        hx-target=".todos-list"
+                        hx-trigger="click"
+                        class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
+                    Add
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <button hx-post="/todos/reset"
+                hx-target=".todos-list"
+                class="bg-gray-300 text-gray-700 py-2 px-4 rounded hover:bg-gray-400">
+            Reset All
+        </button>
+    </div>
+</div>
+
+</body>
+</html>
